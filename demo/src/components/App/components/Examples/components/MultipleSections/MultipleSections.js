@@ -23,7 +23,9 @@ const getSuggestions = value => {
     .map(section => {
       return {
         title: section.title,
-        languages: section.languages.filter(language => regex.test(language.name))
+        languages: section.languages.filter(language =>
+          regex.test(language.name)
+        )
       };
     })
     .filter(section => section.languages.length > 0);
@@ -31,13 +33,9 @@ const getSuggestions = value => {
 
 const getSuggestionValue = suggestion => suggestion.name;
 
-const renderSuggestion = suggestion => (
-  <span>{suggestion.name}</span>
-);
+const renderSuggestion = suggestion => <span>{suggestion.name}</span>;
 
-const renderSectionTitle = section => (
-  <strong>{section.title}</strong>
-);
+const renderSectionTitle = section => <strong>{section.title}</strong>;
 
 const getSectionSuggestions = section => section.languages;
 
@@ -72,7 +70,7 @@ export default class MultipleSections extends Component {
   render() {
     const { value, suggestions } = this.state;
     const inputProps = {
-      placeholder: 'Type \'c\'',
+      placeholder: "Type 'c'",
       value,
       onChange: this.onChange
     };
@@ -85,7 +83,7 @@ export default class MultipleSections extends Component {
           </div>
           <div className={styles.description}>
             Suggestions can also be presented in multiple sections.
-            Note that we focus the first suggestion by default here.
+            Note that we highlight the first suggestion by default here.
           </div>
           <Link
             className={styles.codepenLink}
@@ -106,7 +104,7 @@ export default class MultipleSections extends Component {
             renderSectionTitle={renderSectionTitle}
             getSectionSuggestions={getSectionSuggestions}
             inputProps={inputProps}
-            focusFirstSuggestion={true}
+            highlightFirstSuggestion={true}
             focusInputOnSuggestionClick={focusInputOnSuggestionClick}
             theme={theme}
             id="multiple-sections-example"

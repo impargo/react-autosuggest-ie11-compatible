@@ -8,12 +8,16 @@ const getMatchingLanguages = value => {
   const escapedValue = escapeRegexCharacters(value.trim());
   const regex = new RegExp('^' + escapedValue, 'i');
 
-  return languages.map(section => {
-    return {
-      title: section.title,
-      languages: section.languages.filter(language => regex.test(language.name))
-    };
-  }).filter(section => section.languages.length > 0);
+  return languages
+    .map(section => {
+      return {
+        title: section.title,
+        languages: section.languages.filter(language =>
+          regex.test(language.name)
+        )
+      };
+    })
+    .filter(section => section.languages.length > 0);
 };
 
 let app = null;
@@ -23,9 +27,7 @@ export const getSuggestionValue = sinon.spy(suggestion => {
 });
 
 export const renderSuggestion = sinon.spy(suggestion => {
-  return (
-    <span>{suggestion.name}</span>
-  );
+  return <span>{suggestion.name}</span>;
 });
 
 const alwaysTrue = () => true;
@@ -53,19 +55,17 @@ export const onSuggestionsClearRequested = sinon.spy(() => {
 export const onSuggestionSelected = sinon.spy();
 
 export const renderSectionTitle = sinon.spy(section => {
-  return (
-    <strong>{section.title}</strong>
-  );
+  return <strong>{section.title}</strong>;
 });
 
 export const getSectionSuggestions = sinon.spy(section => {
   return section.languages;
 });
 
-let focusFirstSuggestion = false;
+let highlightFirstSuggestion = false;
 
-export const setFocusFirstSuggestion = value => {
-  focusFirstSuggestion = value;
+export const setHighlightFirstSuggestion = value => {
+  highlightFirstSuggestion = value;
 };
 
 export default class AutosuggestApp extends Component {
@@ -112,7 +112,7 @@ export default class AutosuggestApp extends Component {
           shouldRenderSuggestions={alwaysTrue}
           renderSectionTitle={renderSectionTitle}
           getSectionSuggestions={getSectionSuggestions}
-          focusFirstSuggestion={focusFirstSuggestion}
+          highlightFirstSuggestion={highlightFirstSuggestion}
         />
       </div>
     );

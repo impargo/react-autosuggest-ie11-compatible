@@ -1,5 +1,5 @@
 import React from 'react';
-import TestUtils from 'react-addons-test-utils';
+import TestUtils from 'react-dom/test-utils';
 import { expect } from 'chai';
 import {
   init,
@@ -33,7 +33,7 @@ describe('Autosuggest with focusInputOnSuggestionClick={false}', () => {
     it('should call onBlur once with the right parameters', () => {
       expect(onBlur).to.have.been.calledOnce;
       expect(onBlur).to.have.been.calledWithExactly(syntheticEventMatcher, {
-        focusedSuggestion: { name: 'PHP', year: 1995 }
+        highlightedSuggestion: { name: 'PHP', year: 1995 }
       });
     });
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import TestUtils from 'react-addons-test-utils';
+import TestUtils from 'react-dom/test-utils';
 import { expect } from 'chai';
 import {
   init,
@@ -11,7 +11,7 @@ import {
   getSuggestion,
   expectInputReferenceToBeSet,
   expectSuggestions,
-  expectFocusedSuggestion,
+  expectHighlightedSuggestion,
   getSuggestionsContainerAttribute,
   mouseEnterSuggestion,
   mouseLeaveSuggestion,
@@ -83,8 +83,8 @@ describe('Default Autosuggest', () => {
       expectSuggestions(['Perl', 'PHP', 'Python']);
     });
 
-    it('should not focus on any suggestion', () => {
-      expectFocusedSuggestion(null);
+    it('should not highlight any suggestion', () => {
+      expectHighlightedSuggestion(null);
     });
 
     it('should hide suggestions when Escape is pressed', () => {
@@ -125,15 +125,15 @@ describe('Default Autosuggest', () => {
       expectInputValue('PHP');
     });
 
-    it('should focus on suggestion when mouse enters it', () => {
+    it('should highlight a suggestion when mouse enters it', () => {
       mouseEnterSuggestion(2);
-      expectFocusedSuggestion('Python');
+      expectHighlightedSuggestion('Python');
     });
 
-    it('should not have focused suggestions when mouse leaves a suggestion', () => {
+    it('should not have highlighted suggestions when mouse leaves a suggestion', () => {
       mouseEnterSuggestion(2);
       mouseLeaveSuggestion(2);
-      expectFocusedSuggestion(null);
+      expectHighlightedSuggestion(null);
     });
 
     it('should keep the focus on input when suggestions container is clicked', () => {
@@ -141,10 +141,10 @@ describe('Default Autosuggest', () => {
       expect(isInputFocused()).to.equal(true);
     });
 
-    it('shoud clear the focused suggestion when input value changes', () => {
+    it('shoud reset the highlighted suggestion when input value changes', () => {
       clickDown();
       setInputValue('Per');
-      expectFocusedSuggestion(null);
+      expectHighlightedSuggestion(null);
     });
   });
 
@@ -157,8 +157,8 @@ describe('Default Autosuggest', () => {
       expectSuggestions([]);
     });
 
-    it('should not focus suggestions', () => {
-      expectFocusedSuggestion(null);
+    it('should not highlight suggestions', () => {
+      expectHighlightedSuggestion(null);
     });
 
     it('should clear the input when Escape is pressed', () => {
@@ -206,31 +206,31 @@ describe('Default Autosuggest', () => {
       focusAndSetInputValue('p');
     });
 
-    it('should show suggestions with no focused suggestion, if they are hidden', () => {
+    it('should show suggestions with no highlighted suggestion, if they are hidden', () => {
       clickEscape();
       clickDown();
       expectSuggestions(['Perl', 'PHP', 'Python']);
-      expectFocusedSuggestion(null);
+      expectHighlightedSuggestion(null);
     });
 
-    it('should focus on the first suggestion', () => {
+    it('should highlight the first suggestion', () => {
       clickDown();
-      expectFocusedSuggestion('Perl');
+      expectHighlightedSuggestion('Perl');
     });
 
-    it('should focus on the next suggestion', () => {
+    it('should highlight the next suggestion', () => {
       clickDown(2);
-      expectFocusedSuggestion('PHP');
+      expectHighlightedSuggestion('PHP');
     });
 
-    it('should not focus on any suggestion after reaching the last suggestion', () => {
+    it('should not highlight any suggestion after reaching the last suggestion', () => {
       clickDown(4);
-      expectFocusedSuggestion(null);
+      expectHighlightedSuggestion(null);
     });
 
-    it('should focus on the first suggestion again', () => {
+    it('should highlight the first suggestion again', () => {
       clickDown(5);
-      expectFocusedSuggestion('Perl');
+      expectHighlightedSuggestion('Perl');
     });
   });
 
@@ -239,31 +239,31 @@ describe('Default Autosuggest', () => {
       focusAndSetInputValue('p');
     });
 
-    it('should show suggestions with no focused suggestion, if they are hidden', () => {
+    it('should show suggestions with no highlighted suggestion, if they are hidden', () => {
       clickEscape();
       clickUp();
       expectSuggestions(['Perl', 'PHP', 'Python']);
-      expectFocusedSuggestion(null);
+      expectHighlightedSuggestion(null);
     });
 
-    it('should focus on the last suggestion', () => {
+    it('should highlight the last suggestion', () => {
       clickUp();
-      expectFocusedSuggestion('Python');
+      expectHighlightedSuggestion('Python');
     });
 
-    it('should focus on the second last suggestion', () => {
+    it('should highlight the second last suggestion', () => {
       clickUp(2);
-      expectFocusedSuggestion('PHP');
+      expectHighlightedSuggestion('PHP');
     });
 
-    it('should not focus on any suggestion after reaching the first suggestion', () => {
+    it('should not highlight any suggestion after reaching the first suggestion', () => {
       clickUp(4);
-      expectFocusedSuggestion(null);
+      expectHighlightedSuggestion(null);
     });
 
-    it('should focus on the last suggestion again', () => {
+    it('should highlight the last suggestion again', () => {
       clickUp(5);
-      expectFocusedSuggestion('Python');
+      expectHighlightedSuggestion('Python');
     });
   });
 
@@ -272,13 +272,13 @@ describe('Default Autosuggest', () => {
       focusAndSetInputValue('p');
     });
 
-    it('should hide suggestions if there is a focused suggestion', () => {
+    it('should hide suggestions if there is a highlighted suggestion', () => {
       clickDown();
       clickEnter();
       expectSuggestions([]);
     });
 
-    it('should hide suggestions if there is no focused suggestion', () => {
+    it('should hide suggestions if there is no highlighted suggestion', () => {
       clickEnter();
       expectSuggestions([]);
     });
@@ -323,19 +323,28 @@ describe('Default Autosuggest', () => {
     it('should be called once with the right parameters when Up is pressed', () => {
       clickUp();
       expect(getSuggestionValue).to.have.been.calledOnce;
-      expect(getSuggestionValue).to.have.been.calledWithExactly({ name: 'Ruby', year: 1995 });
+      expect(getSuggestionValue).to.have.been.calledWithExactly({
+        name: 'Ruby',
+        year: 1995
+      });
     });
 
     it('should be called once with the right parameters when Down is pressed', () => {
       clickDown();
       expect(getSuggestionValue).to.have.been.calledOnce;
-      expect(getSuggestionValue).to.have.been.calledWithExactly({ name: 'Ruby', year: 1995 });
+      expect(getSuggestionValue).to.have.been.calledWithExactly({
+        name: 'Ruby',
+        year: 1995
+      });
     });
 
     it('should be called once with the right parameters when suggestion is clicked', () => {
       clickSuggestion(0);
       expect(getSuggestionValue).to.have.been.calledOnce;
-      expect(getSuggestionValue).to.have.been.calledWithExactly({ name: 'Ruby', year: 1995 });
+      expect(getSuggestionValue).to.have.been.calledWithExactly({
+        name: 'Ruby',
+        year: 1995
+      });
     });
 
     it('should not be called when input is focused', () => {
@@ -353,17 +362,23 @@ describe('Default Autosuggest', () => {
     });
 
     it('should be called with the right parameters', () => {
-      expect(renderSuggestion).to.have.been.calledWithExactly({ name: 'Ruby', year: 1995 }, { query: 'r' });
+      expect(renderSuggestion).to.have.been.calledWithExactly(
+        { name: 'Ruby', year: 1995 },
+        { query: 'r', isHighlighted: false }
+      );
       renderSuggestion.reset();
       clickDown();
-      expect(renderSuggestion).to.have.been.calledWithExactly({ name: 'Ruby', year: 1995 }, { query: 'r' });
+      expect(renderSuggestion).to.have.been.calledWithExactly(
+        { name: 'Ruby', year: 1995 },
+        { query: 'r', isHighlighted: true }
+      );
     });
 
     it('should be called once per suggestion', () => {
       expect(renderSuggestion).to.have.been.calledOnce;
     });
 
-    it('should be called twice when the focused item is changed', () => {
+    it('should be called twice when the highlighted suggestion is changed', () => {
       focusAndSetInputValue('c');
       clickDown();
       renderSuggestion.reset();
@@ -372,14 +387,18 @@ describe('Default Autosuggest', () => {
     });
 
     it('return value should be used to render suggestions', () => {
-      expect(getInnerHTML(getSuggestion(0))).to.equal('<strong>R</strong><span>uby</span>');
+      expect(getInnerHTML(getSuggestion(0))).to.equal(
+        '<strong>R</strong><span>uby</span>'
+      );
     });
 
     it('should not change the query when mouse leaves a suggestion', () => {
       clickDown();
       mouseEnterSuggestion(0);
       mouseLeaveSuggestion(0);
-      expect(getInnerHTML(getSuggestion(0))).to.equal('<strong>R</strong><span>uby</span>');
+      expect(getInnerHTML(getSuggestion(0))).to.equal(
+        '<strong>R</strong><span>uby</span>'
+      );
     });
   });
 
@@ -398,7 +417,7 @@ describe('Default Autosuggest', () => {
       });
     });
 
-    it('should be called once with the right parameters when pressing Down focuses on a suggestion which differs from input value', () => {
+    it('should be called once with the right parameters when pressing Down highlight a suggestion which differs from input value', () => {
       clickDown();
       expect(onChange).to.have.been.calledOnce;
       expect(onChange).to.be.calledWithExactly(syntheticEventMatcher, {
@@ -407,7 +426,7 @@ describe('Default Autosuggest', () => {
       });
     });
 
-    it('should be called once with the right parameters when pressing Up focuses on a suggestion which differs from input value', () => {
+    it('should be called once with the right parameters when pressing Up highlight a suggestion which differs from input value', () => {
       clickUp();
       expect(onChange).to.have.been.calledOnce;
       expect(onChange).to.be.calledWithExactly(syntheticEventMatcher, {
@@ -441,7 +460,7 @@ describe('Default Autosuggest', () => {
       expect(onChange).not.to.have.been.called;
     });
 
-    it('should not be called when pressing Down focuses on suggestion which value equals to input value', () => {
+    it('should not be called when pressing Down highlight a suggestion which value equals to input value', () => {
       focusAndSetInputValue('C++');
       onChange.reset();
       clickDown();
@@ -454,7 +473,7 @@ describe('Default Autosuggest', () => {
       expect(onChange).not.to.have.been.called;
     });
 
-    it('should not be called when pressing Up focuses on suggestion which value equals to input value', () => {
+    it('should not be called when pressing Up highlight a suggestion which value equals to input value', () => {
       focusAndSetInputValue('C++');
       onChange.reset();
       clickUp();
@@ -542,7 +561,9 @@ describe('Default Autosuggest', () => {
     it('should be called once with the right parameters when suggestion is clicked', () => {
       clickSuggestion(1);
       expect(onSuggestionSelected).to.have.been.calledOnce;
-      expect(onSuggestionSelected).to.have.been.calledWithExactly(syntheticEventMatcher, {
+      expect(
+        onSuggestionSelected
+      ).to.have.been.calledWithExactly(syntheticEventMatcher, {
         suggestion: { name: 'Javascript', year: 1995 },
         suggestionValue: 'Javascript',
         suggestionIndex: 1,
@@ -551,11 +572,13 @@ describe('Default Autosuggest', () => {
       });
     });
 
-    it('should be called once with the right parameters when Enter is pressed and suggestion is focused', () => {
+    it('should be called once with the right parameters when Enter is pressed and suggestion is highlighted', () => {
       clickDown();
       clickEnter();
       expect(onSuggestionSelected).to.have.been.calledOnce;
-      expect(onSuggestionSelected).to.have.been.calledWithExactly(syntheticEventMatcher, {
+      expect(
+        onSuggestionSelected
+      ).to.have.been.calledWithExactly(syntheticEventMatcher, {
         suggestion: { name: 'Java', year: 1995 },
         suggestionValue: 'Java',
         suggestionIndex: 0,
@@ -564,12 +587,12 @@ describe('Default Autosuggest', () => {
       });
     });
 
-    it('should not be called when Enter is pressed and there is no focused suggestion', () => {
+    it('should not be called when Enter is pressed and there is no highlighted suggestion', () => {
       clickEnter();
       expect(onSuggestionSelected).not.to.have.been.called;
     });
 
-    it('should not be called when Enter is pressed and there is no focused suggestion after Up/Down interaction', () => {
+    it('should not be called when Enter is pressed and there is no highlighted suggestion after Up/Down interaction', () => {
       clickDown();
       clickDown();
       clickDown();
@@ -591,7 +614,9 @@ describe('Default Autosuggest', () => {
       onSuggestionsFetchRequested.reset();
       setInputValue('j');
       expect(onSuggestionsFetchRequested).to.have.been.calledOnce;
-      expect(onSuggestionsFetchRequested).to.have.been.calledWithExactly({ value: 'j' });
+      expect(onSuggestionsFetchRequested).to.have.been.calledWithExactly({
+        value: 'j'
+      });
     });
 
     it('should be called once with the right parameters when Up is pressed to reveal suggestions', () => {
@@ -600,7 +625,9 @@ describe('Default Autosuggest', () => {
       onSuggestionsFetchRequested.reset();
       clickDown();
       expect(onSuggestionsFetchRequested).to.have.been.calledOnce;
-      expect(onSuggestionsFetchRequested).to.have.been.calledWithExactly({ value: 'Javascript' });
+      expect(onSuggestionsFetchRequested).to.have.been.calledWithExactly({
+        value: 'Javascript'
+      });
     });
 
     it('should not be called when input gets focus and shouldRenderSuggestions returns false', () => {
@@ -645,14 +672,14 @@ describe('Default Autosuggest', () => {
       expect(onSuggestionsFetchRequested).not.to.have.been.called;
     });
 
-    it('should not be called when Enter is pressed and there is no focused suggestion', () => {
+    it('should not be called when Enter is pressed and there is no highlighted suggestion', () => {
       focusAndSetInputValue('j');
       onSuggestionsFetchRequested.reset();
       clickEnter();
       expect(onSuggestionsFetchRequested).not.to.have.been.called;
     });
 
-    it('should not be called when Enter is pressed and there is no focused suggestion after Up/Down interaction', () => {
+    it('should not be called when Enter is pressed and there is no highlighted suggestion after Up/Down interaction', () => {
       focusAndSetInputValue('j');
       onSuggestionsFetchRequested.reset();
       clickDown();
@@ -735,14 +762,14 @@ describe('Default Autosuggest', () => {
       blurInput();
       expect(onBlur).to.have.been.calledOnce;
       expect(onBlur).to.have.been.calledWithExactly(syntheticEventMatcher, {
-        focusedSuggestion: null
+        highlightedSuggestion: null
       });
     });
   });
 
   describe('aria attributes', () => {
     describe('initially', () => {
-      describe('should set input\'s', () => {
+      describe("should set input's", () => {
         it('role to "combobox"', () => {
           expectInputAttribute('role', 'combobox');
         });
@@ -760,7 +787,7 @@ describe('Default Autosuggest', () => {
         });
       });
 
-      describe('should not set input\'s', () => {
+      describe("should not set input's", () => {
         it('aria-activedescendant', () => {
           expectInputAttribute('aria-activedescendant', null);
         });
@@ -776,11 +803,14 @@ describe('Default Autosuggest', () => {
         expectInputAttribute('aria-expanded', 'true');
       });
 
-      it('input\'s aria-owns should be equal to suggestions container id', () => {
-        expectInputAttribute('aria-owns', getSuggestionsContainerAttribute('id'));
+      it("input's aria-owns should be equal to suggestions container id", () => {
+        expectInputAttribute(
+          'aria-owns',
+          getSuggestionsContainerAttribute('id')
+        );
       });
 
-      it('input\'s aria-activedescendant should be equal to the focused suggestion id when using keyboard', () => {
+      it("input's aria-activedescendant should be equal to the highlighted suggestion id when using keyboard", () => {
         clickDown();
         expectInputAttribute('aria-activedescendant', getSuggestion(0).id);
         clickDown();
@@ -789,7 +819,7 @@ describe('Default Autosuggest', () => {
         expectInputAttribute('aria-activedescendant', null);
       });
 
-      it('input\'s aria-activedescendant should be equal to the focused suggestion id when using mouse', () => {
+      it("input's aria-activedescendant should be equal to the highlighted suggestion id when using mouse", () => {
         mouseEnterSuggestion(0);
         expectInputAttribute('aria-activedescendant', getSuggestion(0).id);
         mouseLeaveSuggestion(0);

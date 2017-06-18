@@ -18,9 +18,7 @@ export const getSuggestionValue = sinon.spy(suggestion => {
 });
 
 export const renderSuggestion = sinon.spy(suggestion => {
-  return (
-    <span>{suggestion.name}</span>
-  );
+  return <span>{suggestion.name}</span>;
 });
 
 export const onChange = sinon.spy((event, { newValue }) => {
@@ -71,7 +69,7 @@ export default class AutosuggestApp extends Component {
         getSuggestionValue={getSuggestionValue}
         renderSuggestion={renderSuggestion}
         inputProps={inputProps}
-        focusFirstSuggestion={true}
+        highlightFirstSuggestion={true}
       />
     );
   }

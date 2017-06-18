@@ -3,7 +3,7 @@ import styles from './Features.less';
 import React from 'react';
 import Link from 'Link/Link';
 
-const Features = () => (
+const Features = () =>
   <div className={styles.container}>
     <h2 className={styles.header}>
       Features
@@ -17,7 +17,7 @@ const Features = () => (
         <div className={styles.featureDescription}>
           <Link
             className={styles.link}
-            href="http://www.w3.org/TR/wai-aria-practices/#autocomplete"
+            href="https://rawgit.com/w3c/aria-practices/master/aria-practices-DeletedSectionsArchive.html#autocomplete"
           >
             WAI-ARIA compliant
           </Link>
@@ -53,7 +53,6 @@ const Features = () => (
       </Link>
       {' for a full list of features.'}
     </div>
-  </div>
-);
+  </div>;
 
 export default Features;

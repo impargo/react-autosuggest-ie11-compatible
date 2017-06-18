@@ -1,5 +1,5 @@
 import React from 'react';
-import TestUtils from 'react-addons-test-utils';
+import TestUtils from 'react-dom/test-utils';
 import { expect } from 'chai';
 import sinon from 'sinon';
 import {
@@ -9,7 +9,8 @@ import {
   expectContainerAttribute,
   expectInputAttribute,
   expectSuggestions,
-  expectFocusedSuggestion,
+  expectHighlightedSuggestion,
+  expectSuggestionAttribute,
   getSuggestionsContainerAttribute,
   getTitle,
   clickSuggestion,
@@ -26,7 +27,7 @@ import AutosuggestApp, {
   onSuggestionSelected,
   renderSectionTitle,
   getSectionSuggestions,
-  setFocusFirstSuggestion
+  setHighlightFirstSuggestion
 } from './AutosuggestApp';
 
 describe('Autosuggest with multiSection={true}', () => {
@@ -38,8 +39,20 @@ describe('Autosuggest with multiSection={true}', () => {
     it('should show suggestions input is empty and true is returned', () => {
       focusInput();
       expectSuggestions([
-        'C', 'C#', 'C++', 'Clojure', 'Elm', 'Go', 'Haskell', 'Java',
-        'Javascript', 'Perl', 'PHP', 'Python', 'Ruby', 'Scala'
+        'C',
+        'C#',
+        'C++',
+        'Clojure',
+        'Elm',
+        'Go',
+        'Haskell',
+        'Java',
+        'Javascript',
+        'Perl',
+        'PHP',
+        'Python',
+        'Ruby',
+        'Scala'
       ]);
     });
   });
@@ -52,17 +65,23 @@ describe('Autosuggest with multiSection={true}', () => {
 
     it('should be called with the right sectionIndex when suggestion is clicked', () => {
       clickSuggestion(4);
-      expect(onSuggestionSelected).to.have.been.calledWith(syntheticEventMatcher, sinon.match({
-        sectionIndex: 1
-      }));
+      expect(onSuggestionSelected).to.have.been.calledWith(
+        syntheticEventMatcher,
+        sinon.match({
+          sectionIndex: 1
+        })
+      );
     });
 
-    it('should be called with the right sectionIndex when Enter is pressed and suggestion is focused', () => {
+    it('should be called with the right sectionIndex when Enter is pressed and suggestion is highlighted', () => {
       clickDown(6);
       clickEnter();
-      expect(onSuggestionSelected).to.have.been.calledWith(syntheticEventMatcher, sinon.match({
-        sectionIndex: 2
-      }));
+      expect(onSuggestionSelected).to.have.been.calledWith(
+        syntheticEventMatcher,
+        sinon.match({
+          sectionIndex: 2
+        })
+      );
     });
   });
 
@@ -71,7 +90,9 @@ describe('Autosuggest with multiSection={true}', () => {
       onSuggestionsFetchRequested.reset();
       focusInput();
       expect(onSuggestionsFetchRequested).to.have.been.calledOnce;
-      expect(onSuggestionsFetchRequested).to.have.been.calledWithExactly({ value: '' });
+      expect(onSuggestionsFetchRequested).to.have.been.calledWithExactly({
+        value: ''
+      });
     });
 
     it('should be called once with the right parameters when Escape is pressed and suggestions are hidden and shouldRenderSuggestions returns true for empty value', () => {
@@ -79,7 +100,9 @@ describe('Autosuggest with multiSection={true}', () => {
       onSuggestionsFetchRequested.reset();
       clickEscape();
       expect(onSuggestionsFetchRequested).to.have.been.calledOnce;
-      expect(onSuggestionsFetchRequested).to.have.been.calledWithExactly({ value: '' });
+      expect(onSuggestionsFetchRequested).to.have.been.calledWithExactly({
+        value: ''
+      });
     });
   });
 
@@ -92,8 +115,20 @@ describe('Autosuggest with multiSection={true}', () => {
     it('should show suggestions', () => {
       clickClearButton();
       expectSuggestions([
-        'C', 'C#', 'C++', 'Clojure', 'Elm', 'Go', 'Haskell', 'Java',
-        'Javascript', 'Perl', 'PHP', 'Python', 'Ruby', 'Scala'
+        'C',
+        'C#',
+        'C++',
+        'Clojure',
+        'Elm',
+        'Go',
+        'Haskell',
+        'Java',
+        'Javascript',
+        'Perl',
+        'PHP',
+        'Python',
+        'Ruby',
+        'Scala'
       ]);
     });
   });
@@ -168,35 +203,66 @@ describe('Autosuggest with multiSection={true}', () => {
     });
   });
 
-  describe('default styling', () => {
-    it('should set input class', () => {
+  describe('default theme', () => {
+    it('should set the input class', () => {
       expectInputAttribute('class', 'react-autosuggest__input');
     });
 
-    it('should add open container class when suggestions are shown', () => {
+    it('should add the open container class when suggestions are shown', () => {
       focusAndSetInputValue('c');
-      expectContainerAttribute('class', 'react-autosuggest__container react-autosuggest__container--open');
+      expectContainerAttribute(
+        'class',
+        'react-autosuggest__container react-autosuggest__container--open'
+      );
     });
 
-    it('should remove open container class when suggestions are hidden', () => {
+    it('should remove the open container class when suggestions are hidden', () => {
       focusAndSetInputValue('c');
       clickEscape();
       expectContainerAttribute('class', 'react-autosuggest__container');
     });
 
-    it('should set suggestions container class', () => {
+    it('should set suggestions the container class', () => {
+      expect(getSuggestionsContainerAttribute('class')).to.equal(
+        'react-autosuggest__suggestions-container'
+      );
+
       focusAndSetInputValue('e');
-      expect(getSuggestionsContainerAttribute('class')).to.equal('react-autosuggest__suggestions-container');
+      expect(getSuggestionsContainerAttribute('class')).to.equal(
+        'react-autosuggest__suggestions-container react-autosuggest__suggestions-container--open'
+      );
+    });
+
+    it('should add the first suggestion class only to the first suggestion', () => {
+      focusAndSetInputValue('c');
+      expectSuggestionAttribute(
+        0,
+        'class',
+        'react-autosuggest__suggestion react-autosuggest__suggestion--first'
+      );
+      expectSuggestionAttribute(1, 'class', 'react-autosuggest__suggestion');
+    });
+
+    it('should add the highlighted suggestion class only to the highlighted suggestion', () => {
+      focusAndSetInputValue('c');
+      clickDown();
+      clickDown();
+      expectSuggestionAttribute(
+        1,
+        'class',
+        'react-autosuggest__suggestion react-autosuggest__suggestion--highlighted'
+      );
+      expectSuggestionAttribute(2, 'class', 'react-autosuggest__suggestion');
     });
   });
 
-  describe('and focusFirstSuggestion={true}', () => {
+  describe('and highlightFirstSuggestion={true}', () => {
     before(() => {
-      setFocusFirstSuggestion(true);
+      setHighlightFirstSuggestion(true);
     });
 
     after(() => {
-      setFocusFirstSuggestion(false);
+      setHighlightFirstSuggestion(false);
     });
 
     describe('when typing and matches exist', () => {
@@ -204,8 +270,8 @@ describe('Autosuggest with multiSection={true}', () => {
         focusAndSetInputValue('p');
       });
 
-      it('should focus on the first suggestion', () => {
-        expectFocusedSuggestion('Perl');
+      it('should highlight the first suggestion', () => {
+        expectHighlightedSuggestion('Perl');
       });
     });
   });

@@ -13,35 +13,37 @@ const getMatchingLanguages = value => {
 
 let app = null;
 
-export const getSuggestionValue = sinon.spy(suggestion => {
-  return suggestion.name;
-});
-
-export const renderSuggestion = sinon.spy(suggestion => {
-  return <span>{suggestion.name}</span>;
-});
-
-export const onChange = sinon.spy((event, { newValue }) => {
+const onChange = (event, { newValue }) => {
   app.setState({
     value: newValue
   });
-});
+};
 
-export const onBlur = sinon.spy();
-
-export const onSuggestionsFetchRequested = sinon.spy(({ value }) => {
+const onSuggestionsFetchRequested = ({ value }) => {
   app.setState({
     suggestions: getMatchingLanguages(value)
   });
-});
+};
 
-export const onSuggestionsClearRequested = sinon.spy(() => {
+const onSuggestionsClearRequested = () => {
   app.setState({
     suggestions: []
   });
-});
+};
 
-export const onSuggestionSelected = sinon.spy();
+const getSuggestionValue = suggestion => suggestion.name;
+
+const renderSuggestion = suggestion => suggestion.name;
+
+export const renderSuggestionsContainer = sinon.spy(
+  ({ containerProps, children, query }) =>
+    <div {...containerProps}>
+      {children}
+      <div className="my-suggestions-container-footer">
+        Press Enter to search <strong className="my-query">{query}</strong>
+      </div>
+    </div>
+);
 
 export default class AutosuggestApp extends Component {
   constructor() {
@@ -55,12 +57,17 @@ export default class AutosuggestApp extends Component {
     };
   }
 
+  storeAutosuggestReference = autosuggest => {
+    if (autosuggest !== null) {
+      this.input = autosuggest.input;
+    }
+  };
+
   render() {
     const { value, suggestions } = this.state;
     const inputProps = {
       value,
-      onChange,
-      onBlur
+      onChange
     };
 
     return (
@@ -70,9 +77,9 @@ export default class AutosuggestApp extends Component {
         onSuggestionsClearRequested={onSuggestionsClearRequested}
         getSuggestionValue={getSuggestionValue}
         renderSuggestion={renderSuggestion}
+        renderSuggestionsContainer={renderSuggestionsContainer}
         inputProps={inputProps}
-        onSuggestionSelected={onSuggestionSelected}
-        focusInputOnSuggestionClick={false}
+        ref={this.storeAutosuggestReference}
       />
     );
   }

@@ -1,10 +1,10 @@
 import React from 'react';
-import TestUtils from 'react-addons-test-utils';
+import TestUtils from 'react-dom/test-utils';
 import {
   init,
   expectInputValue,
   expectSuggestions,
-  expectFocusedSuggestion,
+  expectHighlightedSuggestion,
   clickSuggestion,
   focusInput,
   blurInput,
@@ -17,8 +17,20 @@ import {
 import AutosuggestApp from './AutosuggestApp';
 
 const allSuggestions = [
-  'C', 'C#', 'C++', 'Clojure', 'Elm', 'Go', 'Haskell', 'Java',
-  'Javascript', 'Perl', 'PHP', 'Python', 'Ruby', 'Scala'
+  'C',
+  'C#',
+  'C++',
+  'Clojure',
+  'Elm',
+  'Go',
+  'Haskell',
+  'Java',
+  'Javascript',
+  'Perl',
+  'PHP',
+  'Python',
+  'Ruby',
+  'Scala'
 ];
 
 describe('Autosuggest with alwaysRenderSuggestions={true}', () => {
@@ -63,18 +75,18 @@ describe('Autosuggest with alwaysRenderSuggestions={true}', () => {
   });
 
   describe('when pressing Down', () => {
-    it('should focus on the first suggestion', () => {
+    it('should highlight the first suggestion', () => {
       focusAndSetInputValue('p');
       clickDown();
-      expectFocusedSuggestion('Perl');
+      expectHighlightedSuggestion('Perl');
     });
   });
 
   describe('when pressing Up', () => {
-    it('should focus on the last suggestion', () => {
+    it('should highlight the last suggestion', () => {
       focusAndSetInputValue('p');
       clickUp();
-      expectFocusedSuggestion('Python');
+      expectHighlightedSuggestion('Python');
     });
   });
 
@@ -83,13 +95,13 @@ describe('Autosuggest with alwaysRenderSuggestions={true}', () => {
       focusAndSetInputValue('p');
     });
 
-    it('should update suggestions if there is a focused suggestion', () => {
+    it('should update suggestions if there is a highlighted suggestion', () => {
       clickDown();
       clickEnter();
       expectSuggestions(['Perl']);
     });
 
-    it('should not hide suggestions if there is no focused suggestion', () => {
+    it('should not hide suggestions if there is no highlighted suggestion', () => {
       clickEnter();
       expectSuggestions(['Perl', 'PHP', 'Python']);
     });
@@ -117,8 +129,8 @@ describe('Autosuggest with alwaysRenderSuggestions={true}', () => {
         expectInputValue('p');
       });
 
-      it('should unfocus the focused suggestion', () => {
-        expectFocusedSuggestion(null);
+      it('should reset the highlighted suggestion', () => {
+        expectHighlightedSuggestion(null);
       });
 
       it('should clear the input when Escape is pressed again', () => {
@@ -135,11 +147,11 @@ describe('Autosuggest with alwaysRenderSuggestions={true}', () => {
       expectSuggestions(['PHP']);
     });
 
-    it('should reset the focused suggestion', () => {
+    it('should reset the highlighted suggestion', () => {
       focusAndSetInputValue('j');
       clickSuggestion(1);
       clickDown();
-      expectFocusedSuggestion('Javascript');
+      expectHighlightedSuggestion('Javascript');
     });
   });
 });
