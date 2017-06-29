@@ -18,6 +18,7 @@ import {
   clickEscape,
   clickEnter,
   clickDown,
+  clickUp,
   setInputValue,
   focusAndSetInputValue,
   clickClearButton
@@ -25,6 +26,7 @@ import {
 import AutosuggestApp, {
   onSuggestionsFetchRequested,
   onSuggestionSelected,
+  onSuggestionHighlighted,
   renderSectionTitle,
   getSectionSuggestions,
   setHighlightFirstSuggestion
@@ -47,7 +49,7 @@ describe('Autosuggest with multiSection={true}', () => {
         'Go',
         'Haskell',
         'Java',
-        'Javascript',
+        'JavaScript',
         'Perl',
         'PHP',
         'Python',
@@ -85,13 +87,37 @@ describe('Autosuggest with multiSection={true}', () => {
     });
   });
 
+  describe('onSuggestionHighlighted', () => {
+    it('should be called once with the suggestion that becomes highlighted', () => {
+      focusAndSetInputValue('c');
+      onSuggestionHighlighted.reset();
+      clickDown();
+      expect(onSuggestionHighlighted).to.have.been.calledOnce;
+      expect(onSuggestionHighlighted).to.have.been.calledWithExactly({
+        suggestion: { name: 'C', year: 1972 }
+      });
+    });
+
+    it('should be called once with null when there is no more highlighted suggestion', () => {
+      focusAndSetInputValue('c');
+      clickDown();
+      onSuggestionHighlighted.reset();
+      clickUp();
+      expect(onSuggestionHighlighted).to.have.been.calledOnce;
+      expect(onSuggestionHighlighted).to.have.been.calledWithExactly({
+        suggestion: null
+      });
+    });
+  });
+
   describe('onSuggestionsFetchRequested', () => {
     it('should be called once with the right parameters when input gets focus and shouldRenderSuggestions returns true', () => {
       onSuggestionsFetchRequested.reset();
       focusInput();
       expect(onSuggestionsFetchRequested).to.have.been.calledOnce;
       expect(onSuggestionsFetchRequested).to.have.been.calledWithExactly({
-        value: ''
+        value: '',
+        reason: 'input-focused'
       });
     });
 
@@ -101,7 +127,8 @@ describe('Autosuggest with multiSection={true}', () => {
       clickEscape();
       expect(onSuggestionsFetchRequested).to.have.been.calledOnce;
       expect(onSuggestionsFetchRequested).to.have.been.calledWithExactly({
-        value: ''
+        value: '',
+        reason: 'escape-pressed'
       });
     });
   });
@@ -123,7 +150,7 @@ describe('Autosuggest with multiSection={true}', () => {
         'Go',
         'Haskell',
         'Java',
-        'Javascript',
+        'JavaScript',
         'Perl',
         'PHP',
         'Python',
@@ -191,7 +218,7 @@ describe('Autosuggest with multiSection={true}', () => {
             year: 1995
           },
           {
-            name: 'Javascript',
+            name: 'JavaScript',
             year: 1995
           }
         ]

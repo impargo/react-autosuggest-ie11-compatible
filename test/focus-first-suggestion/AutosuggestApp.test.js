@@ -19,7 +19,8 @@ import {
 } from '../helpers';
 import AutosuggestApp, {
   onChange,
-  onSuggestionSelected
+  onSuggestionSelected,
+  onSuggestionHighlighted
 } from './AutosuggestApp';
 
 describe('Autosuggest with highlightFirstSuggestion={true}', () => {
@@ -55,7 +56,7 @@ describe('Autosuggest with highlightFirstSuggestion={true}', () => {
 
     it('should highlight a suggestion when mouse enters it', () => {
       mouseEnterSuggestion(1);
-      expectHighlightedSuggestion('Javascript');
+      expectHighlightedSuggestion('JavaScript');
     });
 
     it('should not have highlighted suggestions when mouse leaves a suggestion', () => {
@@ -72,7 +73,7 @@ describe('Autosuggest with highlightFirstSuggestion={true}', () => {
 
     it('should highlight the second suggestion', () => {
       clickDown();
-      expectHighlightedSuggestion('Javascript');
+      expectHighlightedSuggestion('JavaScript');
     });
 
     it('should not highlight any suggestion after reaching the last suggestion', () => {
@@ -109,12 +110,9 @@ describe('Autosuggest with highlightFirstSuggestion={true}', () => {
   });
 
   describe('inputProps.onChange', () => {
-    beforeEach(() => {
+    it('should be called once with the right parameters when Enter is pressed after autohighlight', () => {
       focusAndSetInputValue('p');
       onChange.reset();
-    });
-
-    it('should be called once with the right parameters when Enter is pressed after autohighlight', () => {
       clickEnter();
       expect(onChange).to.have.been.calledOnce;
       expect(onChange).to.be.calledWith(syntheticEventMatcher, {
@@ -125,12 +123,9 @@ describe('Autosuggest with highlightFirstSuggestion={true}', () => {
   });
 
   describe('onSuggestionSelected', () => {
-    beforeEach(() => {
+    it('should be called once with the right parameters when Enter is pressed after autohighlight', () => {
       focusAndSetInputValue('p');
       onSuggestionSelected.reset();
-    });
-
-    it('should be called once with the right parameters when Enter is pressed after autohighlight', () => {
       clickEnter();
       expect(onSuggestionSelected).to.have.been.calledOnce;
       expect(
@@ -141,6 +136,17 @@ describe('Autosuggest with highlightFirstSuggestion={true}', () => {
         suggestionIndex: 0,
         sectionIndex: null,
         method: 'enter'
+      });
+    });
+  });
+
+  describe('onSuggestionHighlighted', () => {
+    it('should be called once with the highlighed suggestion when the first suggestion is autohighlighted', () => {
+      onSuggestionHighlighted.reset();
+      focusAndSetInputValue('p');
+      expect(onSuggestionHighlighted).to.have.been.calledOnce;
+      expect(onSuggestionHighlighted).to.have.been.calledWithExactly({
+        suggestion: { name: 'Perl', year: 1987 }
       });
     });
   });
