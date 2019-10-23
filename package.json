@@ -1,13 +1,13 @@
 {
-  "name": "react-autosuggest",
-  "version": "9.4.4",
+  "name": "impargo-autosuggest",
+  "version": "1.0.1",
   "description": "WAI-ARIA compliant React autosuggest component",
   "main": "dist/index.js",
+  "types": "types/index.d.ts",
   "repository": {
     "type": "git",
-    "url": "https://github.com/JacksonKearl/react-autosuggest-ie11-compatible.git"
+    "url": "https://github.com/ahmed-sayegh/react-autosuggest-ie11-compatible.git"
   },
-  "author": "Jackson Kearl <jkearl@mit.edu>",
   "scripts": {
     "start": "mkdir -p demo/dist && npm run copy-static-files && node server",
     "prettier": "prettier --single-quote --write \".*.js\" \"*.js\" \"demo/src/**/*.js\" \"demo/standalone/app.js\" \"src/**/*.js\" \"test/**/*.js\"",
