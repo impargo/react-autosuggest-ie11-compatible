@@ -571,6 +571,7 @@ export default class Autosuggest extends Component {
           this.onSuggestionsClearRequested();
         }
       },
+      ...(isIE11 ? { onChange: () => {} } : {}),
       [isIE11 ? 'onInput' : 'onChange']: event => {
         const { value } = event.target;
         const shouldRender = shouldRenderSuggestions(value);
