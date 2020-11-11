@@ -365,6 +365,9 @@ export default class Autosuggest extends Component {
     if (!this.justSelectedSuggestion) {
       this.justSelectedSuggestion = true;
       this.pressedSuggestion = event.target;
+      setTimeout(() => {
+        this.justSelectedSuggestion = false;
+      });
     }
   };
 
